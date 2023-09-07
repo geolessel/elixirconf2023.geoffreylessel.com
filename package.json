@@ -8,7 +8,11 @@
   },
   "dependencies": {
     "@slidev/cli": "^0.43.0-beta.7",
+    "@slidev/theme-bricks": "^0.0.2",
     "@slidev/theme-default": "latest",
-    "@slidev/theme-seriph": "latest"
+    "@slidev/theme-seriph": "latest",
+    "@slidev/theme-shibainu": "^0.0.2",
+    "slidev-theme-light-icons": "^1.0.2",
+    "slidev-theme-the-unnamed": "^0.0.10"
   }
 }

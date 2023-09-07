@@ -1,0 +1,15 @@
+.slidev-vclick-hidden {
+    display: none;
+}
+
+.slidev-layout.center h1 {
+    -webkit-text-fill-color: inherit;
+}
+
+.two-cols-header {
+    column-gap: 12px;
+}
+
+.slidev-layout h1 + p {
+    opacity: 1;
+}

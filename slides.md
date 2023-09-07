@@ -1,433 +1,906 @@
 ---
 theme: seriph
-background: https://source.unsplash.com/collection/94734566/1920x1080
+background: /pinnacle.jpg
 class: text-center
 highlighter: shiki
-lineNumbers: false
+lineNumbers: true
 info: |
-  ## Slidev Starter Template
-  Presentation slides for developers.
-
-  Learn more at [Sli.dev](https://sli.dev)
+  ## Introducing Vox
+  Slide deck for ElixirConf 2023
 drawings:
   persist: false
-transition: slide-left
-title: Welcome to Slidev
+title: ElixirConf 2023 - Introducing Vox
 mdc: true
 ---
 
-# Welcome to Slidev
+# Introducing VOX
 
-Presentation slides for developers
-
-<div class="pt-12">
-  <span @click="$slidev.nav.next" class="px-2 py-1 rounded cursor-pointer" hover="bg-white bg-opacity-10">
-    Press Space for next page <carbon:arrow-right class="inline"/>
-  </span>
-</div>
+## The static site generator for Elixir lovers
 
 <div class="abs-br m-6 flex gap-2">
-  <button @click="$slidev.nav.openInEditor()" title="Open in Editor" class="text-xl slidev-icon-btn opacity-50 !border-none !hover:text-white">
-    <carbon:edit />
-  </button>
-  <a href="https://github.com/slidevjs/slidev" target="_blank" alt="GitHub"
-    class="text-xl slidev-icon-btn opacity-50 !border-none !hover:text-white">
+  <a href="https://github.com/geolessel/vox" target="_blank" alt="GitHub"
+    class="text-xl slidev-icon-btn opacity-80 !border-none !hover:text-white">
     <carbon-logo-github />
+    geolessel/vox
   </a>
 </div>
 
-<!--
-The last comment block of each slide will be treated as slide notes. It will be visible and editable in Presenter Mode along with the slide. [Read more in the docs](https://sli.dev/guide/syntax.html#notes)
--->
+
+
+
+---
+transition: slide-left
+layout: image-right
+image: /geo.jpg
+---
+
+# Geoffrey Lessel
+
+<v-clicks>
+
+- Elixir lover for 9 years
+- Odd-year ElixirConf alum (spoke at 2017, 2019, 2021, and now 2023)
+- Blog(ged) at https://geoffreylessel.com
+- Wrote **Phoenix in Action** for Manning http://phoenixinaction.com (use code `PHX23`)
+- Made **Build It With Phoenix** https://builditwithphoenix.com (use code `elixirconf`)
+- Various other Elixir shenanigans
+
+</v-clicks>
+
+---
+layout: fact
+transition: slide-up
+---
+
+# How it started
+
+
+
+
+---
+layout: two-cols-header
+transition: slide-down
+---
+
+# BuildItWithPhoenix.com
+
+::left::
+
+# Things I wanted
+
+<v-clicks>
+
+- Elixir
+- HTML
+- mirrored directory structure
+- EEx
+- templates
+- Tailwind
+- extensible
+- lightly held opinions
+
+</v-clicks>
+
+::right::
+
+<v-click>
+
+# Things I looked at
+
+</v-click>
+
+<v-clicks>
+
+- jekyl
+  - too much Ruby
+- 11ty, nextjs, gatsby
+  - too much JavaScript
+- still-ex
+  - too much Slime
+  - archived on July 6
+- lambdapad
+  - too much Erlang
+
+</v-clicks>
+
+<style>
+.slidev-vclick-hidden {
+  display: block;
+}
+</style>
+
+---
+layout: statement
+transition: slide-up
+---
+
+# How it went
+
+
+
+---
+layout: statement
+transition: slide-up
+---
+
+# A brief history
+
+
+
+---
+layout: center
+transition: slide-left
+---
+
+# 2019: I wanted to sim race
+
+## Result?
+
+
+---
+layout: center
+transition: slide-right
+---
+
+# External steering wheel display
+
+![](/elixirconf-2019.png)
+
+
+
+
+
+---
+layout: center
+transition: slide-left
+---
+
+# 2020: I wanted to make music
+
+## Result?
+
+
+---
+layout: center
+transition: slide-right
+---
+# MIDI sequencer
+
+![](/empex-2020.png)
+
+
+
+
+
+---
+layout: center
+transition: slide-left
+---
+
+# 2021: I wanted to learn assembly
+
+## Result?
+
+---
+layout: center
+transition: slide-right
+---
+# ex6502
+
+![](/elixirconf-2021.png)
+
+
+
+---
+layout: fact
+transition: slide-down
+---
+
+You should really check out https://justforfunnoreally.dev
+
+
+
+
+---
+layout: statement
+transition: slide-up
+---
+
+# Let's look at some code
+
+
+
+
+---
+layout: two-cols-header
+clicks: 2
+transition: fade
+---
+
+# How it works - `FileFinder`
+
+- Gather a list of files to compile
+
+::left::
+
+<v-clicks>
+
+- find _all_ the files in the `root_dir`
+- add them all to a collection of unprocessed files for later processing
+
+</v-clicks>
+
+::right::
+
+```elixir {all|4,10-14|5-7} {lines:true,at:0}
+defmodule Vox.Builder.FileFinder do
+  def collect(root_dir) do
+    root_dir
+    |> find()
+    |> Enum.each(
+      &Vox.Builder.Collection.add(&1, :unprocessed)
+    )
+  end
+
+  def find(root_dir) do
+    [root_dir, "**", "*"]
+    |> Path.join()
+    |> Path.wildcard()
+  end
+end
+```
+
+
+
+
+---
+layout: two-cols-header
+transition: fade
+---
+
+# How it works - `FileFinder`
+
+- Gather a list of files to compile
+
+::left::
+
+- create a `File{}` struct
+
+::right::
+
+```elixir
+defmodule Vox.Builder.File do
+  @src_dir Application.compile_env(:vox, :src_dir)
+
+  defstruct bindings: [],
+            collections: [],
+            compiled: nil,
+            content: "",
+            destination_path: "",
+            final: "",
+            root_template: "#{@src_dir}/_root.html.eex",
+            source_path: "",
+            template: "",
+            type: nil
+end
+```
+
+
+
+
+
+---
+transition: fade
+---
+
+# How it works - `FileCompiler`
+
+- *waves hands indiscriminately* Compile the files
+
+```elixir
+defmodule Vox.Builder.FileCompiler do
+  def compile() do
+    Vox.Builder.Collection.list_files()
+    |> compile_files()
+    |> compute_collections()
+    |> compute_bindings()
+    |> update_collector()
+    |> eval_files()
+    |> put_nearest_template()
+    |> insert_into_template()
+    |> update_collector()
+  end
+  ...
+end
+```
+
+
+
+
+---
+transition: fade
+---
+
+# `FileCompiler.compile_files/1`
+
+```elixir {all|2-3|4-20|4,5|4,7-10|4,12-20|22-23|25-27|all} {maxHeight:'400px'}
+defp compile_files(files) do
+  Enum.reduce(files, [], fn %File{source_path: path} = file, acc ->
+    case Path.extname(path) do
+      ".eex" ->
+        compiled = EEx.compile_file(path)
+
+        destination_path =
+          path
+          |> Path.rootname(".eex")
+          |> String.trim_leading(Application.get_env(:vox, :src_dir) <> "/")
+
+        [
+          %File{
+            file
+            | compiled: compiled,
+              destination_path: destination_path,
+              type: :evaled
+          }
+          | acc
+        ]
+
+      "" ->
+        acc
+
+      _ext_of_passthrough ->
+        destination_path = String.trim_leading(path, Application.get_env(:vox, :src_dir) <> "/")
+        [%File{file | destination_path: destination_path, type: :passthrough} | acc]
+    end
+  end)
+end
+```
+
+
+
+
+
+
+---
+transition: fade
+---
+
+# `FileCompiler.compute_collections/1`
+
+```elixir {all} {maxHeight:'400px'}
+iex(1)> EEx.compile_string("<% elixirconf = :fantastic %>")
+{:__block__, [],
+ [{:=, [line: 1], [{:elixirconf, [line: 1], nil}, :fantastic]}, {:<<>>, [], []}]}
+```
+
+<v-click at="0">
+
+```elixir {all|1-3|4-6|7-15|8-11|13-14|17|all} {maxHeight:'300px'}
+defp compute_collections(files) do
+  Enum.map(files, fn file ->
+    collections =
+      file.compiled
+      |> Macro.prewalker()
+      |> Enum.map(& &1)
+      |> Enum.reduce([], fn
+        {:=, _line, [{:collections, _collections_line, _nil}, collections]}, acc ->
+          collections = List.wrap(collections)
+          Vox.Builder.Collection.add_collections(collections)
+          collections ++ acc
+
+        _other, acc ->
+          acc
+      end)
+
+    %{file | collections: collections}
+  end)
+end
+```
+
+</v-click>
+
+
+
+
+
+---
+transition: fade
+---
+
+# `FileCompiler.compute_bindings/1`
+
+```elixir {all}
+iex(3)> Code.eval_quoted(compiled)
+{"", [elixirconf: :fantastic]}
+```
+
+<v-click at="0">
+
+```elixir {all|2|4-17|5-10|13-16|all} {maxHeight:'400px'}
+defp compute_bindings(files) do
+  assigns = Vox.Builder.Collection.assigns()
+
+  Enum.map(files, fn file ->
+    {_content, bindings} =
+      Code.eval_quoted(
+        file.compiled,
+        [assigns: assigns],
+        __ENV__
+      )
+
+    # make the bindings accessible through map dot notation
+    bindings
+    |> Enum.reduce(%{file | bindings: bindings}, fn {key, value}, file ->
+      Map.put_new(file, key, value)
+    end)
+  end)
+end
+```
+
+</v-click>
+
+
+
+
+---
+transition: fade
+---
+
+# How it works - `FileCompiler`
+
+```elixir {all|3-6|7,11|8}
+defmodule Vox.Builder.FileCompiler do
+  def compile() do
+    Vox.Builder.Collection.list_files()
+    |> compile_files()
+    |> compute_collections()
+    |> compute_bindings()
+    |> update_collector()
+    |> eval_files()
+    |> put_nearest_template()
+    |> insert_into_template()
+    |> update_collector()
+  end
+  ...
+end
+```
+
+
+
+---
+transition: fade
+---
+
+# `FileCompiler.eval_files/1`
+
+```elixir {all|2|4-6,17|4,8-16,17|all} {maxHeight:'400px'}
+defp eval_files(files) do
+  collection_assigns = Vox.Builder.Collection.assigns()
+
+  Enum.map(files, fn
+    %File{type: :passthrough} = file ->
+      file
+
+    %File{type: :evaled, compiled: compiled} = file ->
+      {content, _bindings} =
+        Code.eval_quoted(
+          compiled,
+          [assigns: collection_assigns ++ file.bindings],
+          __ENV__
+        )
+
+      %{file | content: String.trim(content)}
+  end)
+end
+```
+
+
+
+---
+transition: fade
+---
+
+# `FileCompiler.put_nearest_template/1`
+
+```elixir {all|1-3|5|7-19|9,13-15|9,10-11|23-34|26-28,33|26,30-33|21} {maxHeight:'400px'}
+defp put_nearest_template(files) when is_list(files) do
+  Enum.map(files, &put_nearest_template/1)
+end
+
+defp put_nearest_template(%File{type: :passthrough} = file), do: file
+
+defp put_nearest_template(%File{source_path: path, bindings: bindings} = file) do
+  template =
+    case bindings[:template] do
+      nil ->
+        find_template_in_this_and_parent_directory({:ok, Path.dirname(path)})
+
+      template ->
+        {:ok, template} = Path.safe_relative(Path.join(Path.dirname(path), template))
+        template
+    end
+
+  %{file | template: template}
+end
+
+defp find_template_in_this_and_parent_directory(:error), do: "site/_template.html.eex"
+
+defp find_template_in_this_and_parent_directory({:ok, path}) do
+  this_template = Path.join([path, "_template.html.eex"])
+
+  case Elixir.File.exists?(this_template) do
+    true ->
+      this_template
+
+    false ->
+      parent_dir = Path.safe_relative(Path.join(path, ".."))
+      find_template_in_this_and_parent_directory(parent_dir)
+  end
+end
+```
+
+
+
+
+---
+transition: fade
+---
+
+# `FileCompiler.insert_into_template/1`
+
+```elixir {all|2-4|2,6-21|2,6,15-16|2,6,18|2,6,20-21} {maxHeight:'400px'}
+defp insert_into_template(files) do
+  Enum.map(files, fn
+    %File{type: :passthrough} = file ->
+      file
+
+    %File{content: content, template: template} = file ->
+      bindings =
+        file.bindings
+        |> Enum.filter(fn
+          {{_, EEx.Engine}, _} -> false
+          _ -> true
+        end)
+        |> Enum.into(Keyword.new())
+
+      templated =
+        EEx.eval_file(template, assigns: Keyword.merge(bindings, inner_content: content))
+
+      assigns = Keyword.merge(bindings, inner_content: templated)
+
+      final = EEx.eval_file(file.root_template, assigns: assigns)
+      %{file | final: final}
+  end)
+end
+```
+
+
+
+---
+transition: slide-down
+---
+
+# How it works - `FileWriter`
+
+- it writes files using `Mix.Generator`
+
+
+
+---
+layout: statement
+transition: slide-left
+---
+
+# Generating a new project
+
+## `mix vox.new`
+
+
+
+---
+transition: fade
+---
+
+# `mix vox.new`
+
+```elixir {all|5} {maxHeight:'400px'}
+defmodule Mix.Tasks.Vox.New do
+  @template_string_to_replace "APP"
+
+  use Mix.Task
+  use VoxNew.Templater
+
+  alias VoxNew.Project
+
+  template("mix.exs")
+  template("README.md")
+  template("assets/app.js", :esbuild)
+  template("config/config.exs")
+  template("lib/application.ex", :esbuild)
+  template("lib/#{@template_string_to_replace}/esbuild.ex", :esbuild)
+  template("lib/#{@template_string_to_replace}.ex")
+  template("site/_root.html.eex")
+  template("site/_template.html.eex")
+  template("site/index.html.eex")
+  template("site/posts/hello-world.html.eex")
+  template("test/test_helper.exs")
+  template("test/#{@template_string_to_replace}_test.exs")
+
+  @impl Mix.Task
+  def run(argv) do
+    {flags, [path | _rest]} = OptionParser.parse!(argv, strict: [esbuild: :boolean])
+
+    # [TODO] I think these could result in incorrect formatting
+    module_name = Macro.camelize(path)
+    app_name = Macro.underscore(path)
+    esbuild = Keyword.get(flags, :esbuild, false)
+
+    generate(%Project{
+      app_name: app_name,
+      base_path: path,
+      esbuild: esbuild,
+      module_name: module_name
+    })
+  end
+
+  defp generate(project) do
+    project
+    |> copy_templates()
+  end
+
+  defp copy_templates(%Project{} = project) do
+    @templates
+    |> Enum.each(fn
+      {template, true} ->
+        copy_template(template, project)
+
+      {template, flag} when is_atom(flag) ->
+        if Map.get(project, flag) do
+          copy_template(template, project)
+        end
+    end)
+
+    project
+  end
+
+  defp copy_template(template, %Project{base_path: base_path} = project) do
+    contents = render_template(template, project: project)
+
+    template_for_app =
+      String.replace(template, @template_string_to_replace, project.app_name)
+
+    write_path = Path.join(base_path, template_for_app)
+    Mix.Generator.create_file(write_path, contents)
+  end
+end
+```
+
+
+
+
+---
+transition: fade
+---
+
+# The magic of macros
+
+```elixir {all|2-8|5,25-29|6,10-23|10,13,15|10,13,17-21} {maxHeight:'400px'}
+defmodule VoxNew.Templater do
+  defmacro __using__(_env) do
+    quote do
+      import unquote(__MODULE__)
+      Module.register_attribute(__MODULE__, :templates, accumulate: true)
+      @before_compile unquote(__MODULE__)
+    end
+  end
+
+  defmacro __before_compile__(env) do
+    base_path = Path.expand("../../templates", __DIR__)
+
+    for {template_path, _flag} <- Module.get_attribute(env.module, :templates) do
+      path = Path.join(base_path, template_path)
+      compiled = EEx.compile_file(path)
+
+      quote generated: true do
+        @external_resource unquote(path)
+        @file unquote(path)
+        def render_template(unquote(template_path), var!(assigns)), do: unquote(compiled)
+      end
+    end
+  end
+
+  defmacro template(name, flag \\ true) do
+    quote do
+      @templates {unquote(name), unquote(flag)}
+    end
+  end
+end
+```
+
+
+
+---
+transition: slide-down
+---
+
+# `mix vox.new`
+
+```elixir {all|2,9-21|23-38|32,40-43|42,45-58|47-49|47,51-54|49,53,60-68|60,61,68|60,63-67,68} {maxHeight:'400px'}
+defmodule Mix.Tasks.Vox.New do
+  @template_string_to_replace "APP"
+
+  use Mix.Task
+  use VoxNew.Templater
+
+  alias VoxNew.Project
+
+  template("mix.exs")
+  template("README.md")
+  template("assets/app.js", :esbuild)
+  template("config/config.exs")
+  template("lib/application.ex", :esbuild)
+  template("lib/#{@template_string_to_replace}/esbuild.ex", :esbuild)
+  template("lib/#{@template_string_to_replace}.ex")
+  template("site/_root.html.eex")
+  template("site/_template.html.eex")
+  template("site/index.html.eex")
+  template("site/posts/hello-world.html.eex")
+  template("test/test_helper.exs")
+  template("test/#{@template_string_to_replace}_test.exs")
+
+  @impl Mix.Task
+  def run(argv) do
+    {flags, [path | _rest]} = OptionParser.parse!(argv, strict: [esbuild: :boolean])
+
+    # [TODO] I think these could result in incorrect formatting
+    module_name = Macro.camelize(path)
+    app_name = Macro.underscore(path)
+    esbuild = Keyword.get(flags, :esbuild, false)
+
+    generate(%Project{
+      app_name: app_name,
+      base_path: path,
+      esbuild: esbuild,
+      module_name: module_name
+    })
+  end
+
+  defp generate(project) do
+    project
+    |> copy_templates()
+  end
+
+  defp copy_templates(%Project{} = project) do
+    @templates
+    |> Enum.each(fn
+      {template, true} ->
+        copy_template(template, project)
+
+      {template, flag} when is_atom(flag) ->
+        if Map.get(project, flag) do
+          copy_template(template, project)
+        end
+    end)
+
+    project
+  end
+
+  defp copy_template(template, %Project{base_path: base_path} = project) do
+    contents = render_template(template, project: project)
+
+    template_for_app =
+      String.replace(template, @template_string_to_replace, project.app_name)
+
+    write_path = Path.join(base_path, template_for_app)
+    Mix.Generator.create_file(write_path, contents)
+  end
+end
+```
+
+
+
+
+---
+layout: statement
+transition: slide-up
+---
+
+# Did it work?
+
+## Demos
+
+
+
+
+
+
+---
+layout: two-cols-header
+transition: slide-down
+---
+
+# Where do things stand?
+
+::left::
+
+## Working
+
+<v-clicks>
+
+- installer (`mix vox.new`)
+- esbuild
+- `mix vox.build`
+- `mix vox.dev`
+
+</v-clicks>
+
+::right::
+
+<v-click>
+
+## Needs work
+
+</v-click>
+
+<v-clicks>
+
+- annoying warnings
+- better errors
+- TESTS
+- other processor plugins
+  - Markdown
+- general refactoring
+
+</v-clicks>
+
+<style>
+.slidev-vclick-hidden {
+  display: block;
+}
+</style>
+
+
+
+---
+layout: statement
+transition: fade-out
+---
+
+# VOX needs YOU
+
+
 
 ---
 transition: fade-out
 ---
 
-# What is Slidev?
+# Codes and such
 
-Slidev is a slides maker and presenter designed for developers, consist of the following features
+## Build It With Phoenix
 
-- 📝 **Text-based** - focus on the content with Markdown, and then style them later
-- 🎨 **Themable** - theme can be shared and used with npm packages
-- 🧑‍💻 **Developer Friendly** - code highlighting, live coding with autocompletion
-- 🤹 **Interactive** - embedding Vue components to enhance your expressions
-- 🎥 **Recording** - built-in recording and camera view
-- 📤 **Portable** - export into PDF, PNGs, or even a hostable SPA
-- 🛠 **Hackable** - anything possible on a webpage
+- https://BuildItWithPhoenix.com
+- code `elixirconf` gets 15% off through next Sunday
+- sign up for the mailing list - **I'M GIVING AWAY 2 COPIES NEXT WEEK**
 
-<br>
-<br>
+## Phoenix in Action
 
-Read more about [Why Slidev?](https://sli.dev/guide/why)
+- http://PhoenixInAction.com
+- code `PHX23` gets you 30% off anything at Manning.com
+- sign up for the Build It With Phoenix mailing list -- **I'M GIVING AWAY 2 EBOOKS NEXT WEEK**
 
-<!--
-You can have `style` tag in markdown to override the style for the current page.
-Learn more: https://sli.dev/guide/syntax#embedded-styles
--->
 
-<style>
-h1 {
-  background-color: #2B90B6;
-  background-image: linear-gradient(45deg, #4EC5D4 10%, #146b8c 20%);
-  background-size: 100%;
-  -webkit-background-clip: text;
-  -moz-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  -moz-text-fill-color: transparent;
-}
-</style>
-
-<!--
-Here is another comment.
--->
-
----
-layout: default
----
-
-# Table of contents
-
-```html
-<Toc minDepth="1" maxDepth="1"></Toc>
-```
-
-<Toc maxDepth="1"></Toc>
-
----
-transition: slide-up
-level: 2
----
-
-# Navigation
-
-Hover on the bottom-left corner to see the navigation's controls panel, [learn more](https://sli.dev/guide/navigation.html)
-
-### Keyboard Shortcuts
-
-|     |     |
-| --- | --- |
-| <kbd>right</kbd> / <kbd>space</kbd>| next animation or slide |
-| <kbd>left</kbd>  / <kbd>shift</kbd><kbd>space</kbd> | previous animation or slide |
-| <kbd>up</kbd> | previous slide |
-| <kbd>down</kbd> | next slide |
-
-<!-- https://sli.dev/guide/animations.html#click-animations -->
-<img
-  v-click
-  class="absolute -bottom-9 -left-7 w-80 opacity-50"
-  src="https://sli.dev/assets/arrow-bottom-left.svg"
-/>
-<p v-after class="absolute bottom-23 left-45 opacity-30 transform -rotate-10">Here!</p>
-
----
-layout: image-right
-image: https://source.unsplash.com/collection/94734566/1920x1080
----
-
-# Code
-
-Use code snippets and get the highlighting directly![^1]
-
-```ts {all|2|1-6|9|all}
-interface User {
-  id: number
-  firstName: string
-  lastName: string
-  role: string
-}
-
-function updateUser(id: number, update: User) {
-  const user = getUser(id)
-  const newUser = { ...user, ...update }
-  saveUser(id, newUser)
-}
-```
-
-<arrow v-click="[3, 4]" x1="400" y1="420" x2="230" y2="330" color="#564" width="3" arrowSize="1" />
-
-[^1]: [Learn More](https://sli.dev/guide/syntax.html#line-highlighting)
-
-<style>
-.footnotes-sep {
-  @apply mt-20 opacity-10;
-}
-.footnotes {
-  @apply text-sm opacity-75;
-}
-.footnote-backref {
-  display: none;
-}
-</style>
-
----
-
-# Components
-
-<div grid="~ cols-2 gap-4">
-<div>
-
-You can use Vue components directly inside your slides.
-
-We have provided a few built-in components like `<Tweet/>` and `<Youtube/>` that you can use directly. And adding your custom components is also super easy.
-
-```html
-<Counter :count="10" />
-```
-
-<!-- ./components/Counter.vue -->
-<Counter :count="10" m="t-4" />
-
-Check out [the guides](https://sli.dev/builtin/components.html) for more.
-
-</div>
-<div>
-
-```html
-<Tweet id="1390115482657726468" />
-```
-
-<Tweet id="1390115482657726468" scale="0.65" />
-
-</div>
-</div>
-
-<!--
-Presenter note with **bold**, *italic*, and ~~striked~~ text.
-
-Also, HTML elements are valid:
-<div class="flex w-full">
-  <span style="flex-grow: 1;">Left content</span>
-  <span>Right content</span>
-</div>
--->
 
 
 ---
-class: px-20
+transition: fade-out
+layout: two-cols
 ---
 
-# Themes
+# Find me and VOX online
 
-Slidev comes with powerful theming support. Themes can provide styles, layouts, components, or even configurations for tools. Switching between themes by just **one edit** in your frontmatter:
-
-<div grid="~ cols-2 gap-2" m="-t-2">
-
-```yaml
----
-theme: default
----
-```
-
-```yaml
----
-theme: seriph
----
-```
-
-<img border="rounded" src="https://github.com/slidevjs/themes/blob/main/screenshots/theme-default/01.png?raw=true">
-
-<img border="rounded" src="https://github.com/slidevjs/themes/blob/main/screenshots/theme-seriph/01.png?raw=true">
-
-</div>
-
-Read more about [How to use a theme](https://sli.dev/themes/use.html) and
-check out the [Awesome Themes Gallery](https://sli.dev/themes/gallery.html).
-
----
-preload: false
----
-
-# Animations
-
-Animations are powered by [@vueuse/motion](https://motion.vueuse.org/).
-
-```html
-<div
-  v-motion
-  :initial="{ x: -80 }"
-  :enter="{ x: 0 }">
-  Slidev
-</div>
-```
-
-<div class="w-60 relative mt-6">
-  <div class="relative w-40 h-40">
-    <img
-      v-motion
-      :initial="{ x: 800, y: -100, scale: 1.5, rotate: -50 }"
-      :enter="final"
-      class="absolute top-0 left-0 right-0 bottom-0"
-      src="https://sli.dev/logo-square.png"
-    />
-    <img
-      v-motion
-      :initial="{ y: 500, x: -100, scale: 2 }"
-      :enter="final"
-      class="absolute top-0 left-0 right-0 bottom-0"
-      src="https://sli.dev/logo-circle.png"
-    />
-    <img
-      v-motion
-      :initial="{ x: 600, y: 400, scale: 2, rotate: 100 }"
-      :enter="final"
-      class="absolute top-0 left-0 right-0 bottom-0"
-      src="https://sli.dev/logo-triangle.png"
-    />
-  </div>
-
-  <div
-    class="text-5xl absolute top-14 left-40 text-[#2B90B6] -z-1"
-    v-motion
-    :initial="{ x: -80, opacity: 0}"
-    :enter="{ x: 0, opacity: 1, transition: { delay: 2000, duration: 1000 } }">
-    Slidev
-  </div>
-</div>
-
-<!-- vue script setup scripts can be directly used in markdown, and will only affects current page -->
-<script setup lang="ts">
-const final = {
-  x: 0,
-  y: 0,
-  rotate: 0,
-  scale: 1,
-  transition: {
-    type: 'spring',
-    damping: 10,
-    stiffness: 20,
-    mass: 2
-  }
-}
-</script>
-
-<div
-  v-motion
-  :initial="{ x:35, y: 40, opacity: 0}"
-  :enter="{ y: 0, opacity: 1, transition: { delay: 3500 } }">
-
-[Learn More](https://sli.dev/guide/animations.html#motion)
-
-</div>
-
----
-
-# LaTeX
-
-LaTeX is supported out-of-box powered by [KaTeX](https://katex.org/).
-
-<br>
-
-Inline $\sqrt{3x-1}+(1+x)^2$
-
-Block
-$$
-\begin{array}{c}
-
-\nabla \times \vec{\mathbf{B}} -\, \frac1c\, \frac{\partial\vec{\mathbf{E}}}{\partial t} &
-= \frac{4\pi}{c}\vec{\mathbf{j}}    \nabla \cdot \vec{\mathbf{E}} & = 4 \pi \rho \\
-
-\nabla \times \vec{\mathbf{E}}\, +\, \frac1c\, \frac{\partial\vec{\mathbf{B}}}{\partial t} & = \vec{\mathbf{0}} \\
-
-\nabla \cdot \vec{\mathbf{B}} & = 0
-
-\end{array}
-$$
-
-<br>
-
-[Learn more](https://sli.dev/guide/syntax#latex)
-
----
-
-# Diagrams
-
-You can create diagrams / graphs from textual descriptions, directly in your Markdown.
-
-<div class="grid grid-cols-4 gap-5 pt-4 -mb-6">
-
-```mermaid {scale: 0.5}
-sequenceDiagram
-    Alice->John: Hello John, how are you?
-    Note over Alice,John: A typical interaction
-```
-
-```mermaid {theme: 'neutral', scale: 0.8}
-graph TD
-B[Text] --> C{Decision}
-C -->|One| D[Result 1]
-C -->|Two| E[Result 2]
-```
-
-```mermaid
-mindmap
-  root((mindmap))
-    Origins
-      Long history
-      ::icon(fa fa-book)
-      Popularisation
-        British popular psychology author Tony Buzan
-    Research
-      On effectivness<br/>and features
-      On Automatic creation
-        Uses
-            Creative techniques
-            Strategic planning
-            Argument mapping
-    Tools
-      Pen and paper
-      Mermaid
-```
-
-```plantuml {scale: 0.7}
-@startuml
-
-package "Some Group" {
-  HTTP - [First Component]
-  [Another Component]
-}
-
-node "Other Groups" {
-  FTP - [Second Component]
-  [First Component] --> FTP
-}
-
-cloud {
-  [Example 1]
-}
-
-
-database "MySql" {
-  folder "This is my folder" {
-    [Folder 3]
-  }
-  frame "Foo" {
-    [Frame 4]
-  }
-}
-
-
-[Another Component] --> [Example 1]
-[Example 1] --> [Folder 3]
-[Folder 3] --> [Frame 4]
-
-@enduml
-```
-
-</div>
-
-[Learn More](https://sli.dev/guide/syntax.html#diagrams)
-
----
-src: ./pages/multiple-entries.md
-hide: false
----
-
----
-layout: center
-class: text-center
----
-
-# Learn More
-
-[Documentations](https://sli.dev) · [GitHub](https://github.com/slidevjs/slidev) · [Showcases](https://sli.dev/showcases.html)
+- https://github.com/geolessel/vox
+- @geolessel
+- @geo (elixirforum.com)
+- https://geoffreylessel.com
+- https://builditwithphoenix.com
+- http://phoenixinaction.com
