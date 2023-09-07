@@ -13,3 +13,7 @@
 .slidev-layout h1 + p {
     opacity: 1;
 }
+
+code {
+    font-size: 1.35em;
+}

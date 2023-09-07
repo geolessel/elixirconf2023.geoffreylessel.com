@@ -588,7 +588,7 @@ transition: slide-down
 
 ---
 layout: statement
-transition: slide-left
+transition: slide-up
 ---
 
 # Generating a new project
