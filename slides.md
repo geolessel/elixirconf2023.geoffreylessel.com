@@ -879,7 +879,7 @@ transition: fade-out
 ## Build It With Phoenix
 
 - https://BuildItWithPhoenix.com
-- code `elixirconf` gets 15% off through next Sunday
+- code `elixirconf` gets 15% off through next Saturday
 - sign up for the mailing list - **I'M GIVING AWAY 2 COPIES NEXT WEEK**
 
 ## Phoenix in Action
@@ -904,3 +904,13 @@ layout: two-cols
 - https://geoffreylessel.com
 - https://builditwithphoenix.com
 - http://phoenixinaction.com
+
+::right::
+
+<div style="display: flex; flex-direction: column; align-items: center;">
+
+![](/qr.png)
+
+### elixirconf2023.geoffreylessel.com
+
+</div>

@@ -1,11 +1,6 @@
-# Welcome to [Slidev](https://github.com/slidevjs/slidev)!
+# Introducing Vox - the static site generator for Elixir lovers
 
-To start the slide show:
+## ElixirConf 2023
 
-- `npm install`
-- `npm run dev`
-- visit http://localhost:3030
-
-Edit the [slides.md](./slides.md) to see the changes.
-
-Learn more about Slidev on [documentations](https://sli.dev/).
+These are my slides for ElixirConf 2023.
+You can view them online at https://elixirconf2023.geoffreylessel.com.
